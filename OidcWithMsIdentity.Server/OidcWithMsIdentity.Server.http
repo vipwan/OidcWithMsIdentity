@@ -1,0 +1,57 @@
+﻿@baseUrl = https://localhost:7102
+@clientId = client_id
+@clientSecret = client_secret
+@username = vipwan@sina.com
+@password = 123456
+
+
+### 1. 获取访问令牌 (客户端凭据授权)
+# @name getToken
+POST {{baseUrl}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&client_id={{clientId}}&client_secret={{clientSecret}}&scope=api
+
+### 保存返回的访问令牌
+@accessToken = {{getToken.response.body.$.access_token}}
+
+### 2. 使用访问令牌访问受保护的 API
+GET {{baseUrl}}/api/testapi/secure
+Authorization: Bearer {{accessToken}}
+
+### 3. 访问需要 API 范围的端点
+GET {{baseUrl}}/api/testapi/scoped
+Authorization: Bearer {{accessToken}}
+
+
+### 6. 使用密码授权模式获取令牌
+# @name getPasswordToken
+POST {{baseUrl}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{clientId}}&client_secret={{clientSecret}}&username={{username}}&password={{password}}&scope=api
+
+### 保存返回的密码授权令牌
+@passwordToken = {{getPasswordToken.response.body.$.access_token}}
+
+### 7. 使用密码授权令牌访问受保护的 API
+GET {{baseUrl}}/api/testapi/secure
+Authorization: Bearer {{passwordToken}}
+
+
+### 4. 默认的内部Identity验证方式:
+# @name getIdentityToken
+POST {{baseUrl}}/account/login
+Content-Type: application/json; charset=utf-8
+{
+  "email": "{{username}}",
+  "password": "{{password}}"
+}
+
+### 保存返回的访问令牌
+@identityToken = {{getIdentityToken.response.body.$.accessToken}}
+
+### 5. 使用Identity令牌访问受保护的 API
+GET {{baseUrl}}/api/testapi/default-identity
+Authorization: Bearer {{identityToken}}
+
