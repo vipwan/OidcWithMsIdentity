@@ -40,12 +40,19 @@ builder.Services.AddControllersWithViews();
 // policy
 builder.Services.Configure<AuthorizationOptions>(options =>
 {
+    // 仅允许经过身份验证的用户访问
     options.AddPolicy("user", configurePolicy: policy =>
     {
         policy.RequireAuthenticatedUser();
     });
-});
 
+    // 添加授权策略,需要登录且具有api作用域
+    options.AddPolicy("ApiScope", policy =>
+     {
+         policy.RequireAuthenticatedUser();
+         policy.RequireClaim("scope", "api");
+     });
+});
 
 var configuration = builder.Configuration;
 
@@ -126,16 +133,6 @@ builder.Services.AddOpenIddict()
         options.UseLocalServer();
         options.UseAspNetCore();
     });
-
-
-// 添加授权策略
-builder.Services.AddAuthorizationBuilder()
-// 添加授权策略
-.AddPolicy("ApiScope", policy =>
-{
-    policy.RequireAuthenticatedUser();
-    policy.RequireClaim("scope", "api");
-});
 
 
 // open api
