@@ -16,6 +16,7 @@ public class GithubSetting : ValidationSettingBase<GithubSetting>
 
     public string HomeUrl { get; set; } = "https://github.com/vipwan";
 
-    public string Description { get; set; } = "当前示例项目主要是演示Oidc以及Aspire集成.";
+
+    public string ProjectDescription { get; set; } = "当前示例项目主要是演示Oidc以及Aspire集成.";
 
 }
