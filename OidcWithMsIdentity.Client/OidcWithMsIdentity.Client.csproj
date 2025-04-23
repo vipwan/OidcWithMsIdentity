@@ -5,13 +5,20 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<NoWarn>GEN053;</NoWarn>
+		<SatelliteResourceLanguages>zh-CN;en-US</SatelliteResourceLanguages>
+		<OidcVer>6.2.1</OidcVer>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="9.2.0" />
 		<PackageReference Include="Biwen.AutoClassGen" Version="1.8.1" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.4" />
-		<PackageReference Include="OpenIddict.Client.AspNetCore" Version="6.2.0" />
+		<PackageReference Include="OpenIddict.Client.AspNetCore" Version="$(OidcVer)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\OidcWithMsIdentity.ServiceDefaults\OidcWithMsIdentity.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 </Project>

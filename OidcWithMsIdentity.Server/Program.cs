@@ -2,6 +2,7 @@
 // The OidcWithMsIdentity.Server licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using Biwen.Settings;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,9 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Aspire ServiceDefaults
+builder.AddServiceDefaults();
 
 // 添加 CORS 支持,用于允许跨域请求测试
 builder.Services.AddCors(options =>
@@ -57,11 +61,34 @@ builder.Services.Configure<AuthorizationOptions>(options =>
 var configuration = builder.Configuration;
 
 // dbcontext
-builder.Services.AddDbContext<ApplicationDbContext>((sp, builder) =>
+// 根据配置确定数据库类型
+var dbType = configuration.GetValue<string>("DatabaseType") ?? "sqlite";
+
+if (dbType == "sqlite")
 {
-    // 配置SQLite
-    builder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
-});
+    builder.Services.AddDbContext<ApplicationDbContext>((sp, builder) =>
+    {
+        // 配置SQLite
+        builder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+    });
+}
+else if (dbType == "mysql")
+{
+    // 添加MySQL健康检查和遥测
+    builder.AddMySqlDbContext<ApplicationDbContext>("oidcdb", settings =>
+    {
+    },
+    o =>
+    {
+    });
+    // Enrich MySqlDbContext
+    builder.EnrichMySqlDbContext<ApplicationDbContext>();
+}
+else
+{
+    throw new Exception($"不支持的数据库类型: {dbType}");
+}
+
 
 // identity 
 builder.Services.AddIdentity<MyUser, IdentityRole>(o =>
@@ -134,9 +161,19 @@ builder.Services.AddOpenIddict()
         options.UseAspNetCore();
     });
 
-
 // open api
 builder.Services.AddOpenApi("v1");
+
+// 添加BiwenSettings
+builder.Services.AddBiwenSettings(o =>
+{
+    o.UseCacheOfMemory();
+    o.UseStoreOfEFCore<ApplicationDbContext>();
+    o.PermissionValidator = ctx =>
+    {
+        return Task.FromResult(ctx.User.Identity?.IsAuthenticated is true);
+    };
+});
 
 
 var app = builder.Build();
@@ -191,6 +228,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage(); // 显示详细异常信息
 }
 
+// AddBiwenSettings
+app.UseBiwenSettings();
 
 // Configure the HTTP request pipeline.
 
@@ -204,5 +243,8 @@ app.MapGet("/", async context =>
 
     await Task.CompletedTask;
 });
+
+// Aspire DefaultEndpoints
+app.MapDefaultEndpoints();
 
 app.Run();

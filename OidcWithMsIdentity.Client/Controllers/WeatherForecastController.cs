@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -15,7 +16,8 @@ namespace OidcWithMsIdentity.Client.Controllers;
 public class WeatherForecastController(
     ILogger<WeatherForecastController> logger,
     IConfiguration configuration,
-    IHttpClientFactory httpClientFactory
+    IHttpClientFactory httpClientFactory,
+    IDistributedCache distributedCache
     ) : ControllerBase
 {
     private static readonly string[] Summaries =
@@ -86,4 +88,29 @@ public class WeatherForecastController(
     }
 
 
+    [HttpGet("redis-test")]
+    [Authorize]
+    public async Task<IActionResult> RedisTest()
+    {
+        //演示Redis分布式缓存服务:
+
+        var dateTime = DateTime.Now.ToLongTimeString();
+        var cacheKey = $"cacheTime";
+
+        var cacheData = await distributedCache.GetStringAsync(cacheKey);
+
+        if (cacheData is null)
+        {
+            await distributedCache.SetStringAsync(cacheKey, dateTime,
+                new DistributedCacheEntryOptions
+                {
+                    //假定1分钟过期!
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1)
+                });
+
+            cacheData = dateTime;
+        }
+
+        return Content(cacheData);
+    }
 }

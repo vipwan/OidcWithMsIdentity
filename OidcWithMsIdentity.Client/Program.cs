@@ -9,14 +9,25 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = builder.Configuration;
 // Add services to the container.
+
+// Aspire ServiceDefaults
+builder.AddServiceDefaults();
+// 添加Redis分布式缓存服务
+builder.AddRedisDistributedCache("redis");
+// 如果您需要直接使用IConnectionMultiplexer
+builder.AddRedisClient("redis");
+
+
+// 修改OIDC配置，使用服务发现
+var isDocker = !string.IsNullOrEmpty(configuration["Docker:Oidc:Host"]) &&
+               Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
 
 builder.Services.AddControllers();
 
 // 添加 HttpClient 工厂
 builder.Services.AddHttpClient();
-
-var configuration = builder.Configuration;
 
 // 添加身份验证
 builder.Services.AddAuthentication(options =>
@@ -31,9 +42,12 @@ builder.Services.AddAuthentication(options =>
 })
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    options.Authority = configuration["Oidc:Host"]; // OidcSite的地址
-    options.ClientId = configuration["Oidc:ClientId"]; // 在OidcSite中注册的客户端ID
-    options.ClientSecret = configuration["Oidc:ClientSecret"]; // 在OidcSite中配置的客户端密钥
+    // 根据环境选择合适的配置
+    var configSection = isDocker ? "Docker:Oidc" : "Oidc";
+
+    options.Authority = configuration[$"{configSection}:Host"]; // OIDC服务地址
+    options.ClientId = configuration[$"{configSection}:ClientId"]; // 客户端ID
+    options.ClientSecret = configuration[$"{configSection}:ClientSecret"]; // 客户端密钥
     options.ResponseType = "code";
 
     options.Scope.Clear();
@@ -127,13 +141,16 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // 添加身份验证中间件
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Aspire DefaultEndpoints
+app.MapDefaultEndpoints();
 
 app.MapGet("/", async context =>
 {
@@ -156,6 +173,8 @@ app.MapGet("/", async context =>
         <a href='/account/login'>登录</a><br/>
         <a href='/account/logout'>登出</a><br/>
         <a href='/weatherforecast'>访问天气预报(需要登录)</a><br/>
+        <a href='/weatherforecast/test-api'>测试获取令牌并使用该令牌访问服务端的接口</a><br/>
+        <a href='/weatherforecast/redis-test'>AspireRedis服务测试(需要登录)</a><br/>
         </div>
         <hr
         <div>

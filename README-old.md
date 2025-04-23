@@ -1,26 +1,13 @@
-# OidcWithMsIdentity 使用指南
+﻿# OidcWithMsIdentity 使用指南
 
 ## 项目介绍
 
-OidcWithMsIdentity 是一个基于OpenID Connect和Microsoft Identity的认证授权演示项目。该项目由以下主要部分组成：
+OidcWithMsIdentity 是一个基于OpenID Connect和Microsoft Identity的认证授权演示项目。该项目由两个主要部分组成：
 
 1. **OidcWithMsIdentity.Server**: 一个OpenID Connect身份认证服务器，基于OpenIddict和ASP.NET Core Identity实现
 2. **OidcWithMsIdentity.Client**: 一个客户端应用，使用OpenID Connect协议与服务器进行交互认证
-3. **OidcWithMsIdentity.AppHost**: .NET Aspire应用托管项目，统一管理和编排所有服务
-4. **OidcWithMsIdentity.ServiceDefaults**: 服务默认配置，包含所有项目共享的服务配置
 
 ## 项目架构
-
-### Aspire 托管架构 (OidcWithMsIdentity.AppHost)
-
-项目采用.NET Aspire进行分布式应用托管，具有以下特点：
-
-- 集中式服务编排和管理
-- 内置的服务发现和健康检查
-- 使用MySQL作为数据存储
-- 使用Redis进行分布式缓存
-- 支持容器化部署
-- 提供统一的资源监控和管理仪表板
 
 ### 服务器端 (OidcWithMsIdentity.Server)
 
@@ -47,27 +34,6 @@ OidcWithMsIdentity 是一个基于OpenID Connect和Microsoft Identity的认证�
 - .NET 9.0 或更高版本
 - Visual Studio 2022 或Visual Studio Code
 - 操作系统：Windows、macOS或Linux
-- Docker Desktop (用于Aspire容器化部署)
-
-### 配置AppHost (OidcWithMsIdentity.AppHost)
-
-1. 确保已安装Docker Desktop并运行
-2. 检查`Program.cs`文件中的配置，确保数据库和Redis服务配置正确：
-
-```csharp
-var mysql = builder.AddMySql("mysql")
-    .WithDataVolume("mysql-data")
-    .AddDatabase("oidcdb");
-    
-var redis = builder.AddRedis("redis");
-
-var server = builder.AddProject<Projects.OidcWithMsIdentity_Server>("server")
-    .WithReference(mysql);
-    
-var client = builder.AddProject<Projects.OidcWithMsIdentity_Client>("client")
-    .WithReference(redis)
-    .WithReference(server);
-```
 
 ### 配置服务器 (OidcWithMsIdentity.Server)
 
@@ -101,55 +67,27 @@ var client = builder.AddProject<Projects.OidcWithMsIdentity_Client>("client")
 
 ## 启动项目
 
-### 使用Aspire启动整个应用
-
-1. 在Visual Studio中设置OidcWithMsIdentity.AppHost为启动项目
-2. 按F5启动调试，或使用命令行：
-
-```bash
-cd OidcWithMsIdentity.AppHost
-dotnet run
-```
-
-3. Aspire仪表板将自动打开，显示所有服务的状态
-
-### 单独启动服务器
+### 启动服务器
 
 1. 在Visual Studio中设置OidcWithMsIdentity.Server为启动项目
 2. 按F5启动调试，或使用命令行：
+   ```
+   cd OidcWithMsIdentity.Server
+   dotnet run
+   ```
+3. 服务器默认将在 https://localhost:7001 上运行
 
-```bash
-cd OidcWithMsIdentity.Server
-dotnet run
-```
-
-3. 服务器默认将在 `https://localhost:7001` 上运行
-
-### 单独启动客户端
+### 启动客户端
 
 1. 在Visual Studio中设置OidcWithMsIdentity.Client为启动项目
 2. 按F5启动调试，或使用命令行：
-
-```bash
-cd OidcWithMsIdentity.Client
-dotnet run
-```
-
-3. 客户端默认将在 `https://localhost:7002` 上运行
+   ```
+   cd OidcWithMsIdentity.Client
+   dotnet run
+   ```
+3. 客户端默认将在 https://localhost:7002 上运行
 
 ## 调试指南
-
-### 调试Aspire托管应用
-
-1. **Aspire仪表板**:
-   - 使用Aspire仪表板监控所有服务的健康状态
-   - 检查服务日志和性能指标
-   - 使用Resource Explorer查看服务依赖关系
-
-2. **容器服务调试**:
-   - 使用Docker Desktop查看容器状态和日志
-   - 使用MySQL客户端工具连接MySQL容器
-   - 使用Redis客户端工具连接Redis容器
 
 ### 调试服务器端
 
@@ -163,17 +101,16 @@ dotnet run
 
 3. **OpenIddict配置调试**:
    - 在`Program.cs`中添加日志记录来监控OpenIddict配置
-
-```csharp
-builder.Services.AddOpenIddict()
-    .AddServer(options =>
-    {
-        // 添加更详细的日志
-        options.SetIssuer(new Uri("https://localhost:7001/"));
-        options.DisableAccessTokenEncryption();
-        // 其他配置...
-    });
-```
+   ```csharp
+   builder.Services.AddOpenIddict()
+       .AddServer(options =>
+       {
+           // 添加更详细的日志
+           options.SetIssuer(new Uri("https://localhost:7001/"));
+           options.DisableAccessTokenEncryption();
+           // 其他配置...
+       });
+   ```
 
 4. **常见问题排查**:
    - 如果遇到JWT验证问题，检查签名验证设置
@@ -187,13 +124,12 @@ builder.Services.AddOpenIddict()
 
 2. **令牌处理**:
    - 在控制器中使用调试输出来显示当前用户的声明：
-
-```csharp
-foreach (var claim in User.Claims)
-{
-    Debug.WriteLine($"Claim: {claim.Type} = {claim.Value}");
-}
-```
+   ```csharp
+   foreach (var claim in User.Claims)
+   {
+       Debug.WriteLine($"Claim: {claim.Type} = {claim.Value}");
+   }
+   ```
 
 3. **API调用**:
    - 使用浏览器开发者工具检查API请求头中的授权令牌
@@ -236,21 +172,6 @@ builder.Services.AddAuthorization(options =>
 });
 ```
 
-### 配置Aspire服务注册和发现
-
-在AppHost项目中自定义服务注册和发现：
-
-```csharp
-// 添加自定义服务配置
-var customService = builder.AddProject<Projects.Custom_Service>("custom-service")
-    .WithReference(mysql)
-    .WithReference(redis);
-    
-// 添加外部服务引用
-builder.AddConnectionString("external-service", 
-    builder.Configuration.GetConnectionString("ExternalServiceConnection"));
-```
-
 ## 故障排除
 
 ### 常见问题
@@ -265,22 +186,16 @@ builder.AddConnectionString("external-service",
    - 检查请求头中是否包含正确的CORS头部
 
 3. **数据库连接问题**
-   - 确认数据库连接字符串正确
-   - 检查MySQL容器是否正常运行
-   - 验证数据库用户权限是否正确
+   - 确认SQLite文件路径正确
+   - 检查应用是否有对数据库文件的写入权限
 
-4. **Redis连接问题**
-   - 检查Redis容器是否正常运行
-   - 验证Redis连接字符串是否正确
-
-5. **令牌验证失败**
+4. **令牌验证失败**
    - 检查令牌有效期设置
    - 确保客户端和服务器时间同步
    - 验证签名密钥是否正确配置
 
 ## 参考资源
 
-- [.NET Aspire 官方文档](https://learn.microsoft.com/zh-cn/dotnet/aspire/get-started/aspire-overview)
 - [OpenIddict 官方文档](https://documentation.openiddict.com/)
 - [ASP.NET Core Identity 文档](https://docs.microsoft.com/zh-cn/aspnet/core/security/authentication/identity)
 - [OpenID Connect 规范](https://openid.net/specs/openid-connect-core-1_0.html)
