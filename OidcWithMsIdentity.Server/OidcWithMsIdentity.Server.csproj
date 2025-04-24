@@ -13,6 +13,7 @@
 		<PackageReference Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="9.2.0" />
 		<PackageReference Include="Biwen.AutoClassGen" Version="1.8.1" PrivateAssets="all" />
 		<PackageReference Include="Biwen.Settings" Version="2.6.1" />
+		<PackageReference Include="CommunityToolkit.Aspire.Microsoft.EntityFrameworkCore.Sqlite" Version="9.4.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />

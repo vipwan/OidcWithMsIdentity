@@ -66,11 +66,13 @@ var dbType = configuration.GetValue<string>("DatabaseType") ?? "sqlite";
 
 if (dbType == "sqlite")
 {
-    builder.Services.AddDbContext<ApplicationDbContext>((sp, builder) =>
-    {
-        // 配置SQLite
-        builder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
-    });
+    //builder.Services.AddDbContext<ApplicationDbContext>((sp, builder) =>
+    //{
+    //    // 配置SQLite
+    //    builder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+    //});
+
+    builder.AddSqliteDbContext<ApplicationDbContext>("sqlite");
 }
 else if (dbType == "mysql")
 {

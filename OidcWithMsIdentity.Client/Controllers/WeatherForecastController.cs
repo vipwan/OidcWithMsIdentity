@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -27,6 +28,7 @@ public class WeatherForecastController(
 
     [HttpGet]
     [Authorize(Roles = "admin")] // 需要admin角色
+    [OutputCache(Duration = 60)] // 缓存60秒,当前使用Redis作为分布式缓存
     public IEnumerable<WeatherForecast> Get()
     {
         logger.LogInformation("WeatherForecastController Get method called.");
@@ -113,4 +115,6 @@ public class WeatherForecastController(
 
         return Content(cacheData);
     }
+
+
 }

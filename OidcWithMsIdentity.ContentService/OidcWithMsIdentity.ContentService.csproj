@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.2.0" />
+		<PackageReference Include="Biwen.AutoClassGen" Version="1.8.1" PrivateAssets="all" />
+		<PackageReference Include="CommunityToolkit.Aspire.Meilisearch" Version="9.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\OidcWithMsIdentity.ServiceDefaults\OidcWithMsIdentity.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+</Project>

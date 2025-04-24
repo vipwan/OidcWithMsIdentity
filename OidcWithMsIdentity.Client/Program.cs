@@ -4,12 +4,14 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using OidcWithMsIdentity.Client;
 using System.Security.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
+
 // Add services to the container.
 
 // Aspire ServiceDefaults
@@ -18,7 +20,15 @@ builder.AddServiceDefaults();
 builder.AddRedisDistributedCache("redis");
 // 如果您需要直接使用IConnectionMultiplexer
 builder.AddRedisClient("redis");
+// 添加Redis 输出缓存服务
+builder.AddRedisOutputCache("redis");
 
+builder.Services.AddSingleton<IServiceUriProvider, ServiceUriProvider>();
+
+// 添加YARP服务
+builder.Services.AddHttpForwarder();
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration).AddServiceDiscoveryDestinationResolver();
 
 // 修改OIDC配置，使用服务发现
 var isDocker = !string.IsNullOrEmpty(configuration["Docker:Oidc:Host"]) &&
@@ -136,10 +146,12 @@ builder.Services.AddAuthorizationBuilder()
     policy.RequireClaim("scope", "api");
 });
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+// 添加输出缓存中间件
+app.UseOutputCache();
 
 // app.UseHttpsRedirection();
 
@@ -151,6 +163,21 @@ app.MapControllers();
 
 // Aspire DefaultEndpoints
 app.MapDefaultEndpoints();
+
+// Yarp
+app.MapReverseProxy();
+
+#region 反向代理文档搜索,重定向到内容服务
+
+// 根据环境确定服务地址
+var serviceUriProvider = app.Services.GetRequiredService<IServiceUriProvider>();
+var contentHost = serviceUriProvider.GetServiceUri("content");
+
+app.MapGroup("search")
+    .RequireAuthorization() // 需要登录
+    .MapForwarder("{**path}", contentHost + "/api/blog");
+
+#endregion
 
 app.MapGet("/", async context =>
 {
@@ -175,6 +202,7 @@ app.MapGet("/", async context =>
         <a href='/weatherforecast'>访问天气预报(需要登录)</a><br/>
         <a href='/weatherforecast/test-api'>测试获取令牌并使用该令牌访问服务端的接口</a><br/>
         <a href='/weatherforecast/redis-test'>AspireRedis服务测试(需要登录)</a><br/>
+        <a href='/search?query=first'>检索文档服务(需要登录)</a><br/>
         </div>
         <hr
         <div>

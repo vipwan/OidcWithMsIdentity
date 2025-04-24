@@ -14,11 +14,15 @@
 	<ItemGroup>
 		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.0" />
 		<PackageReference Include="Aspire.Hosting.MySql" Version="9.2.0" />
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.2.0" />
 		<PackageReference Include="Aspire.Hosting.Redis" Version="9.2.0" />
+		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Meilisearch" Version="9.4.0" />
+		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Sqlite" Version="9.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\OidcWithMsIdentity.Client\OidcWithMsIdentity.Client.csproj" />
+	  <ProjectReference Include="..\OidcWithMsIdentity.ContentService\OidcWithMsIdentity.ContentService.csproj" />
 	  <ProjectReference Include="..\OidcWithMsIdentity.Server\OidcWithMsIdentity.Server.csproj" />
 	</ItemGroup>
 

@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OidcWithMsIdentity.AppHost"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OidcWithMsIdentity.ServiceDefaults", "OidcWithMsIdentity.ServiceDefaults\OidcWithMsIdentity.ServiceDefaults.csproj", "{BE156661-89B5-4D6F-BDBE-8C55C9C426F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OidcWithMsIdentity.ContentService", "OidcWithMsIdentity.ContentService\OidcWithMsIdentity.ContentService.csproj", "{F2951C2D-451B-48D3-95A5-814B3629158F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{BE156661-89B5-4D6F-BDBE-8C55C9C426F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE156661-89B5-4D6F-BDBE-8C55C9C426F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE156661-89B5-4D6F-BDBE-8C55C9C426F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2951C2D-451B-48D3-95A5-814B3629158F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2951C2D-451B-48D3-95A5-814B3629158F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2951C2D-451B-48D3-95A5-814B3629158F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2951C2D-451B-48D3-95A5-814B3629158F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,4 @@
-# OidcWithMsIdentity 使用指南
+﻿# OidcWithMsIdentity 使用指南
 
 ## 项目介绍
 
@@ -6,8 +6,9 @@ OidcWithMsIdentity 是一个基于OpenID Connect和Microsoft Identity的认证�
 
 1. **OidcWithMsIdentity.Server**: 一个OpenID Connect身份认证服务器，基于OpenIddict和ASP.NET Core Identity实现
 2. **OidcWithMsIdentity.Client**: 一个客户端应用，使用OpenID Connect协议与服务器进行交互认证
-3. **OidcWithMsIdentity.AppHost**: .NET Aspire应用托管项目，统一管理和编排所有服务
-4. **OidcWithMsIdentity.ServiceDefaults**: 服务默认配置，包含所有项目共享的服务配置
+3. **OidcWithMsIdentity.ContentService**: 内容管理和搜索服务，提供博客内容和全文搜索功能
+4. **OidcWithMsIdentity.AppHost**: .NET Aspire应用托管项目，统一管理和编排所有服务
+5. **OidcWithMsIdentity.ServiceDefaults**: 服务默认配置，包含所有项目共享的服务配置
 
 ## 项目架构
 
@@ -19,6 +20,7 @@ OidcWithMsIdentity 是一个基于OpenID Connect和Microsoft Identity的认证�
 - 内置的服务发现和健康检查
 - 使用MySQL作为数据存储
 - 使用Redis进行分布式缓存
+- 使用RabbitMq进行消息传递
 - 支持容器化部署
 - 提供统一的资源监控和管理仪表板
 
@@ -39,6 +41,18 @@ OidcWithMsIdentity 是一个基于OpenID Connect和Microsoft Identity的认证�
 - 使用OpenID Connect中间件进行身份验证
 - 实现声明（Claims）映射和角色处理
 - 使用获取的Token访问受保护的API
+- 通过Yarp反向代理文档搜索服务
+
+### 内容服务 (OidcWithMsIdentity.ContentService)
+
+内容服务提供博客内容管理和全文搜索功能：
+
+- 基于Meilisearch搜索引擎实现高效全文搜索
+- 支持博客文章的增删改查操作
+- 提供按分类、标签和关键词的内容过滤
+- RESTful API设计，便于与前端应用集成
+- 支持分页、排序和复杂查询功能
+- 通过`RabbitMq`消息实时索引更新，确保搜索结果与内容同步
 
 ## 安装与配置
 
