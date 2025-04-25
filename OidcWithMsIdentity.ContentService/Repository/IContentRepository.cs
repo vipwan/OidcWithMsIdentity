@@ -18,7 +18,7 @@ public interface IContentRepository
 
     Task DeleteBlogAsync(int id);
 
-    Task<IList<Blog>> SearchBlogsAsync(string query, int pageIndex = 0, int pageSize = 10,
+    Task<(IList<Blog>, long)> SearchBlogsAsync(string query, int pageIndex = 0, int pageSize = 10,
     string? category = null, string? sortBy = null);
 
 }

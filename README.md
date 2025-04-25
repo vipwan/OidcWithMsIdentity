@@ -1,4 +1,4 @@
-﻿# OidcWithMsIdentity 使用指南
+﻿# OidcWithMsIdentity 指南
 
 ## 项目介绍
 
@@ -47,12 +47,20 @@ OidcWithMsIdentity 是一个基于OpenID Connect和Microsoft Identity的认证�
 
 内容服务提供博客内容管理和全文搜索功能：
 
-- 基于Meilisearch搜索引擎实现高效全文搜索
+- 支持双引擎搜索策略：
+  - 基于Meilisearch搜索引擎实现高效全文搜索
+  - 基于ElasticSearch搜索引擎提供高级搜索功能和分面搜索
+  - 可通过配置切换选择使用的搜索引擎
 - 支持博客文章的增删改查操作
 - 提供按分类、标签和关键词的内容过滤
 - RESTful API设计，便于与前端应用集成
 - 支持分页、排序和复杂查询功能
 - 通过`RabbitMq`消息实时索引更新，确保搜索结果与内容同步
+- ElasticSearch特性：
+  - 支持高亮显示搜索结果
+  - 支持分面搜索功能（按分类、作者、标签等）
+  - 自定义内容分析器，优化中文搜索体验
+  - 支持模糊搜索，容忍拼写错误
 
 ## 安装与配置
 

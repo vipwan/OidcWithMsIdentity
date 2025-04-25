@@ -25,7 +25,10 @@ public static class ContentApi
             [FromQuery] string? sortBy = null) =>
             {
                 var results = await repository.SearchBlogsAsync(query, pageIndex, pageSize, category, sortBy);
-                return Results.Ok(results);
+
+                var (List, Total) = results;//返回集合和总数
+
+                return Results.Ok(new { List, Total });
             });
     }
 

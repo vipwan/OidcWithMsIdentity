@@ -16,6 +16,14 @@ var mysql = builder.AddMySql("mysql")
 var meilisearch = builder.AddMeilisearch("meilisearch")
     .WithDataVolume("meilisearch");//持久化索引
 
+// 由于本人开发电脑硬件脆弱跑不起来ES.如果你有条件可以使用ES,请取消下面的注释
+
+// 添加elasticsearch搜索引擎
+//var elasticsearch = builder.AddElasticsearch("elasticsearch")
+//    .WithDataVolume("es-data")//持久化索引
+//                              //.WithEnvironment("ES_JAVA_OPTS", "-Xms512m -Xmx512m")//设置JVM内存限制
+//    ;
+
 // 添加mq
 var mq = builder.AddRabbitMQ("mq")
      .WithDataVolume("rabbitmq-data")//持久化数据卷
@@ -35,6 +43,7 @@ var server = builder.AddProject<Projects.OidcWithMsIdentity_Server>("server")
 // 添加ContentService
 var contentSvc = builder.AddProject<Projects.OidcWithMsIdentity_ContentService>("content")
     .WithReference(meilisearch).WaitFor(meilisearch)
+    //.WithReference(elasticsearch).WaitFor(elasticsearch)
     .WithReference(mq).WaitFor(mq)
     ;
 

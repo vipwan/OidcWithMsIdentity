@@ -120,8 +120,12 @@ public class ContentRepository(
     }
 
     // 添加搜索方法
-    public async Task<IList<Blog>> SearchBlogsAsync(string query, int pageIndex = 0, int pageSize = 10,
-        string? category = null, string? sortBy = null)
+    public async Task<(IList<Blog>, long)> SearchBlogsAsync(
+        string query,
+        int pageIndex = 0,
+        int pageSize = 10,
+        string? category = null,
+        string? sortBy = null)
     {
         string? filter = null;
         if (!string.IsNullOrEmpty(category))
@@ -142,7 +146,7 @@ public class ContentRepository(
             filter,
             sort);
 
-        return [.. searchResult.Hits];
+        return ([.. searchResult.Hits], searchResult.TotalHits);
     }
 
     #region 私有方法 - RabbitMQ消息发送

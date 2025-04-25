@@ -14,8 +14,26 @@ builder.Services.AddHttpContextAccessor();
 // Aspire ServiceDefaults
 builder.AddServiceDefaults();
 
-// 添加meilisearch客户端
-builder.AddMeilisearchClient("meilisearch");
+// 根据配置判断引入的搜索服务
+var searchEngine = builder.Configuration["SearchEngine"] ?? "meilisearch";
+
+if (searchEngine == "elasticsearch")
+{
+    // 添加Esasticsearch客户端
+    builder.AddElasticsearchClient("elasticsearch");
+    builder.Services.AddScoped<IBlogSearchService, BlogElasticsearchService>();
+}
+else if (searchEngine == "meilisearch")
+{
+    // 添加meilisearch客户端
+    builder.AddMeilisearchClient("meilisearch");
+    // 注册BlogSearchService
+    builder.Services.AddScoped<IBlogSearchService, BlogMeilisearchService>();
+}
+else
+{
+    throw new Exception("当前索引服务只支持elasticsearch和meilisearch");
+}
 
 // 添加mq
 builder.AddRabbitMQClient(
@@ -23,8 +41,7 @@ builder.AddRabbitMQClient(
     configureConnectionFactory:
         static factory => factory.ClientProvidedName = "content_service");
 
-// 注册BlogSearchService
-builder.Services.AddScoped<IBlogSearchService, BlogSearchService>();
+
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 
 // 注册SearchIndexingService
