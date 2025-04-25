@@ -11,7 +11,6 @@
 		<PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.2.1" />
 		<PackageReference Include="Biwen.AutoClassGen" Version="1.8.1" PrivateAssets="all" />
 		<PackageReference Include="CommunityToolkit.Aspire.Meilisearch" Version="9.4.0" />
-		<PackageReference Include="Elastic.Clients.Elasticsearch" Version="9.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

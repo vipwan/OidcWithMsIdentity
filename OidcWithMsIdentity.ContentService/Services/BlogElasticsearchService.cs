@@ -125,6 +125,14 @@ public class BlogElasticsearchService : IBlogSearchService
     /// </summary>
     public async Task InitializeIndexAsync()
     {
+        // 首先检查索引是否已存在
+        var indexExists = await _elasticsearchClient.Indices.ExistsAsync(IndexName);
+
+        if (indexExists.Exists)
+        {
+            return;//已存在,直接返回
+        }
+
         // 创建索引请求对象，指定索引名称和配置
         var createIndexRequest = new CreateIndexRequest(IndexName)
         {
@@ -221,8 +229,9 @@ public class BlogElasticsearchService : IBlogSearchService
     /// <param name="id">要删除的博客ID</param>
     public async Task DeleteDocumentAsync(int id)
     {
+        var deleteRequest = new DeleteRequest(IndexName, id.ToString());
         // 执行删除文档请求
-        var response = await _elasticsearchClient.DeleteAsync(IndexName, id.ToString());
+        var response = await _elasticsearchClient.DeleteAsync(deleteRequest);
 
         // 检查操作是否成功，忽略文档不存在的情况
         if (!response.IsValidResponse && response.Result != Result.NotFound)
@@ -281,13 +290,13 @@ public class BlogElasticsearchService : IBlogSearchService
                 Fields = new Dictionary<Field, HighlightField>
                 {
                     // 配置标题字段的高亮显示
-                    [nameof(Blog.Title).ToLower()] = new HighlightField
+                    [nameof(Blog.Title).ToLower()!] = new HighlightField
                     {
                         PreTags = ["<mark>"],  // 高亮前缀标签
                         PostTags = ["</mark>"]  // 高亮后缀标签
                     },
                     // 配置内容字段的高亮显示
-                    [nameof(Blog.Content).ToLower()] = new HighlightField
+                    [nameof(Blog.Content).ToLower()!] = new HighlightField
                     {
                         PreTags = ["<mark>"],  // 高亮前缀标签
                         PostTags = ["</mark>"],  // 高亮后缀标签
@@ -473,9 +482,8 @@ public class BlogElasticsearchService : IBlogSearchService
                 // 提取分类值，去除引号
                 var value = filter.Replace("category = ", "").Trim('\'');
                 // 添加分类过滤条件
-                boolQuery.Filter = [new TermQuery
+                boolQuery.Filter = [new TermQuery(nameof(Blog.Category).ToLower()!)
                 {
-                    Field = nameof(Blog.Category).ToLower(),
                     Value = value
                 }];
             }
@@ -484,9 +492,8 @@ public class BlogElasticsearchService : IBlogSearchService
                 // 提取作者值，去除引号
                 var value = filter.Replace("author = ", "").Trim('\'');
                 // 添加作者过滤条件
-                boolQuery.Filter = [new TermQuery
+                boolQuery.Filter = [new TermQuery(nameof(Blog.Author).ToLower()!)
                 {
-                    Field = nameof(Blog.Author).ToLower(),
                     Value = value
                 }];
             }
@@ -513,17 +520,29 @@ public class BlogElasticsearchService : IBlogSearchService
 
         // 根据排序字符串设置不同的排序选项
         if (sort.Contains("createdAt:asc"))
+        {
+            var op = SortOptions.Field(Field.FromString(nameof(Blog.CreatedAt).ToLower())!, new FieldSort { Order = SortOrder.Asc });
             // 按创建时间升序排序
-            sortOptions.Add(new SortOptions { Field = new FieldSort(nameof(Blog.CreatedAt).ToLower()) { Order = SortOrder.Asc } });
+            sortOptions.Add(op);
+        }
         else if (sort.Contains("createdAt:desc"))
+        {
+            var op = SortOptions.Field(Field.FromString(nameof(Blog.CreatedAt).ToLower())!, new FieldSort { Order = SortOrder.Desc });
             // 按创建时间降序排序
-            sortOptions.Add(new SortOptions { Field = new FieldSort(nameof(Blog.CreatedAt).ToLower()) { Order = SortOrder.Desc } });
+            sortOptions.Add(op);
+        }
         else if (sort.Contains("updatedAt:asc"))
+        {
+            var op = SortOptions.Field(Field.FromString(nameof(Blog.UpdatedAt).ToLower())!, new FieldSort { Order = SortOrder.Asc });
             // 按更新时间升序排序
-            sortOptions.Add(new SortOptions { Field = new FieldSort(nameof(Blog.UpdatedAt).ToLower()) { Order = SortOrder.Asc } });
+            sortOptions.Add(op);
+        }
         else if (sort.Contains("updatedAt:desc"))
+        {
+            var op = SortOptions.Field(Field.FromString(nameof(Blog.UpdatedAt).ToLower())!, new FieldSort { Order = SortOrder.Desc });
             // 按更新时间降序排序
-            sortOptions.Add(new SortOptions { Field = new FieldSort(nameof(Blog.UpdatedAt).ToLower()) { Order = SortOrder.Desc } });
+            sortOptions.Add(op);
+        }
 
         // 如果有排序选项则返回，否则返回null
         return sortOptions.Count > 0 ? sortOptions : null;

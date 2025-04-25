@@ -16,13 +16,18 @@ var mysql = builder.AddMySql("mysql")
 var meilisearch = builder.AddMeilisearch("meilisearch")
     .WithDataVolume("meilisearch");//持久化索引
 
-// 由于本人开发电脑硬件脆弱跑不起来ES.如果你有条件可以使用ES,请取消下面的注释
-
 // 添加elasticsearch搜索引擎
-//var elasticsearch = builder.AddElasticsearch("elasticsearch")
-//    .WithDataVolume("es-data")//持久化索引
-//                              //.WithEnvironment("ES_JAVA_OPTS", "-Xms512m -Xmx512m")//设置JVM内存限制
-//    ;
+var elasticsearch = builder.AddElasticsearch("elasticsearch")
+    .WithDataVolume("es-data")//持久化索引
+    .WithEnvironment("xpack.security.enabled", "false")  // 关闭安全功能Kibana链接需要
+    .WithEnvironment("ES_JAVA_OPTS", "-Xms512m -Xmx512m")//设置JVM内存限制
+    ;
+
+// 添加kibana
+//var kibana = builder
+//    .AddContainer("kibana", "kibana", "8.17.3") // Add Kibana from the image kibana
+//    .WithReference(elasticsearch) // Add a reference to the elasticsearch container
+//    .WithEndpoint(5601, 5601, "http"); // Map the container port 5601 to the host port 5601
 
 // 添加mq
 var mq = builder.AddRabbitMQ("mq")
@@ -43,7 +48,7 @@ var server = builder.AddProject<Projects.OidcWithMsIdentity_Server>("server")
 // 添加ContentService
 var contentSvc = builder.AddProject<Projects.OidcWithMsIdentity_ContentService>("content")
     .WithReference(meilisearch).WaitFor(meilisearch)
-    //.WithReference(elasticsearch).WaitFor(elasticsearch)
+    .WithReference(elasticsearch).WaitFor(elasticsearch)
     .WithReference(mq).WaitFor(mq)
     ;
 

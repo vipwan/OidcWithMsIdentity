@@ -52,6 +52,11 @@ public class BlogMeilisearchService(MeilisearchClient meilisearchClient) : IBlog
 
     public async Task InitializeIndexAsync()
     {
+        // 检查索引是否已存在
+        var realIndex = await _meilisearchClient.GetIndexAsync(IndexName);
+        if (realIndex != null)
+            return;
+
         var index = _meilisearchClient.Index(IndexName);
 
         // 定义可搜索的属性
