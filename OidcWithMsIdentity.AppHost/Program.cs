@@ -44,6 +44,7 @@ var client = builder.AddProject<Projects.OidcWithMsIdentity_Client>("client")
     .WithReference(server).WaitFor(server)
     //.WithReplicas(2)//2个副本
     .WithReference(contentSvc)//客户端检索内容服务
+    .WithEnvironment("CLIENT_ENV_VAR", "value")
     ;
 
 builder.Build().Run();

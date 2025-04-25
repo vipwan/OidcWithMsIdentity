@@ -9,6 +9,7 @@ using OidcWithMsIdentity.ContentService.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor();
 
 // Aspire ServiceDefaults
 builder.AddServiceDefaults();
@@ -26,6 +27,9 @@ builder.AddRabbitMQClient(
 builder.Services.AddScoped<IBlogSearchService, BlogSearchService>();
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 
+// 注册SearchIndexingService
+builder.Services.AddHostedService<SearchIndexingService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,11 +41,25 @@ app.MapDefaultEndpoints();
 app.MapGroup("api").AddBlogApi();
 
 // 主页定向到博客列表搜索
-app.MapGet("/", async ctx =>
-{
-    ctx.Response.Redirect("api/blog/search"); await Task.CompletedTask;
-});
+app.MapGet("/", () => Results.Redirect("api/blog/search"));
 
+
+// 模拟修改一篇博客,触发索引更新!
+app.MapGet("/ReIndex", async (IHttpContextAccessor contextAccessor) =>
+{
+    var repository = contextAccessor.HttpContext!.RequestServices.GetRequiredService<IContentRepository>();
+    var blog = await repository.GetBlogByIdAsync(1);
+
+    if (blog == null)
+    {
+        return Results.NotFound();
+    }
+
+    blog.Title = $"First Blog {Guid.CreateVersion7()}";
+    await repository.UpdateBlogAsync(blog);
+
+    return Results.Ok(blog);
+});
 
 // 应用启动时初始化Meilisearch索引
 using (var scope = app.Services.CreateScope())

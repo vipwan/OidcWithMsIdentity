@@ -9,9 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OidcWithMsIdentity.Client",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
+		Graph.png = Graph.png
 		LICENSE.txt = LICENSE.txt
 		README-old.md = README-old.md
 		README.md = README.md
+		Table.png = Table.png
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WithAspire", "WithAspire", "{05735125-B679-6FE5-0FF2-C208ED971257}"
