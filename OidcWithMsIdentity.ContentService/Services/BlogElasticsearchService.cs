@@ -162,7 +162,7 @@ public class BlogElasticsearchService : IBlogSearchService
                 Properties = new Properties
                 {
                     // 配置Title字段为文本类型，使用自定义分析器和关键字字段
-                    { nameof(Blog.Title).ToLower(), new TextProperty
+                    { nameof(Blog.Title).ToCamelCase(), new TextProperty
                         {
                             Analyzer = "content_analyzer",  // 使用自定义内容分析器
                             Fields = new Properties
@@ -173,21 +173,21 @@ public class BlogElasticsearchService : IBlogSearchService
                         }
                     },
                     // 配置Content字段为文本类型，使用自定义分析器
-                    { nameof(Blog.Content).ToLower(), new TextProperty
+                    { nameof(Blog.Content).ToCamelCase(), new TextProperty
                         {
                             Analyzer = "content_analyzer"  // 使用自定义内容分析器
                         }
                     },
                     // 配置Author字段为关键字类型
-                    { nameof(Blog.Author).ToLower(), new KeywordProperty() },
+                    { nameof(Blog.Author).ToCamelCase(), new KeywordProperty() },
                     // 配置Category字段为关键字类型
-                    { nameof(Blog.Category).ToLower(), new KeywordProperty() },
+                    { nameof(Blog.Category).ToCamelCase(), new KeywordProperty() },
                     // 配置Tags字段为关键字类型
-                    { nameof(Blog.Tags).ToLower(), new KeywordProperty() },
+                    { nameof(Blog.Tags).ToCamelCase(), new KeywordProperty() },
                     // 配置CreatedAt字段为日期类型
-                    { nameof(Blog.CreatedAt).ToLower(), new DateProperty() },
+                    { nameof(Blog.CreatedAt).ToCamelCase(), new DateProperty() },
                     // 配置UpdatedAt字段为日期类型
-                    { nameof(Blog.UpdatedAt).ToLower(), new DateProperty() }
+                    { nameof(Blog.UpdatedAt).ToCamelCase(), new DateProperty() }
                 }
             }
         };
@@ -290,13 +290,13 @@ public class BlogElasticsearchService : IBlogSearchService
                 Fields = new Dictionary<Field, HighlightField>
                 {
                     // 配置标题字段的高亮显示
-                    [nameof(Blog.Title).ToLower()!] = new HighlightField
+                    [nameof(Blog.Title).ToCamelCase()!] = new HighlightField
                     {
                         PreTags = ["<mark>"],  // 高亮前缀标签
                         PostTags = ["</mark>"]  // 高亮后缀标签
                     },
                     // 配置内容字段的高亮显示
-                    [nameof(Blog.Content).ToLower()!] = new HighlightField
+                    [nameof(Blog.Content).ToCamelCase()!] = new HighlightField
                     {
                         PreTags = ["<mark>"],  // 高亮前缀标签
                         PostTags = ["</mark>"],  // 高亮后缀标签
@@ -322,7 +322,7 @@ public class BlogElasticsearchService : IBlogSearchService
                     // 添加Category分面聚合
                     searchRequest.Aggregations["categories"] = new TermsAggregation
                     {
-                        Field = nameof(Blog.Category).ToLower(),  // 指定聚合字段
+                        Field = nameof(Blog.Category).ToCamelCase(),  // 指定聚合字段
                         Size = 20  // 返回最多20个分面值
                     };
                 }
@@ -331,7 +331,7 @@ public class BlogElasticsearchService : IBlogSearchService
                     // 添加Author分面聚合
                     searchRequest.Aggregations["authors"] = new TermsAggregation
                     {
-                        Field = nameof(Blog.Author).ToLower(),  // 指定聚合字段
+                        Field = nameof(Blog.Author).ToCamelCase(),  // 指定聚合字段
                         Size = 20  // 返回最多20个分面值
                     };
                 }
@@ -340,7 +340,7 @@ public class BlogElasticsearchService : IBlogSearchService
                     // 添加Tags分面聚合
                     searchRequest.Aggregations["tags"] = new TermsAggregation
                     {
-                        Field = nameof(Blog.Tags).ToLower(),  // 指定聚合字段
+                        Field = nameof(Blog.Tags).ToCamelCase(),  // 指定聚合字段
                         Size = 30  // 返回最多30个分面值
                     };
                 }
@@ -377,13 +377,13 @@ public class BlogElasticsearchService : IBlogSearchService
                 if (hit.Highlight != null && hits.FirstOrDefault(b => b.Id == int.Parse(hit.Id!)) is Blog blog)
                 {
                     // 处理标题高亮
-                    if (hit.Highlight.TryGetValue(nameof(Blog.Title).ToLower(), out var titleHighlights) && titleHighlights.Any())
+                    if (hit.Highlight.TryGetValue(nameof(Blog.Title).ToCamelCase(), out var titleHighlights) && titleHighlights.Any())
                     {
                         // 将原始标题替换为高亮标题
                         blog.Title = titleHighlights.First();
                     }
                     // 处理内容高亮
-                    if (hit.Highlight.TryGetValue(nameof(Blog.Content).ToLower(), out var contentHighlights) && contentHighlights.Any())
+                    if (hit.Highlight.TryGetValue(nameof(Blog.Content).ToCamelCase(), out var contentHighlights) && contentHighlights.Any())
                     {
                         // 将原始内容替换为高亮内容片段拼接结果
                         blog.Content = string.Join("...", contentHighlights);
@@ -418,7 +418,7 @@ public class BlogElasticsearchService : IBlogSearchService
                             facetDict[bucket.Key.ToString()!] = (int)bucket.DocCount;
                         }
                         // 将分面结果添加到结果集合
-                        facetResults[facet.ToLower()] = facetDict;
+                        facetResults[facet.ToCamelCase()] = facetDict;
                     }
                 }
             }
@@ -456,11 +456,11 @@ public class BlogElasticsearchService : IBlogSearchService
         {
             // 指定搜索字段及权重
             Fields = new[] {
-                $"{nameof(Blog.Title).ToLower()}^2",  // 标题字段权重为2
-                nameof(Blog.Content).ToLower(),       // 内容字段
-                nameof(Blog.Author).ToLower(),        // 作者字段
-                nameof(Blog.Category).ToLower(),      // 分类字段
-                nameof(Blog.Tags).ToLower()           // 标签字段
+                $"{nameof(Blog.Title).ToCamelCase()}^2",  // 标题字段权重为2
+                $"{nameof(Blog.Content).ToCamelCase()}",       // 内容字段
+                $"{nameof(Blog.Author).ToCamelCase()}",        // 作者字段
+                $"{nameof(Blog.Category).ToCamelCase()}",      // 分类字段
+                $"{nameof(Blog.Tags).ToCamelCase()}"           // 标签字段
             },
             Query = queryText,                        // 查询文本
             Type = TextQueryType.BestFields,          // 查询类型为最佳字段
@@ -482,7 +482,7 @@ public class BlogElasticsearchService : IBlogSearchService
                 // 提取分类值，去除引号
                 var value = filter.Replace("category = ", "").Trim('\'');
                 // 添加分类过滤条件
-                boolQuery.Filter = [new TermQuery(nameof(Blog.Category).ToLower()!)
+                boolQuery.Filter = [new TermQuery(nameof(Blog.Category).ToCamelCase()!)
                 {
                     Value = value
                 }];
@@ -492,7 +492,7 @@ public class BlogElasticsearchService : IBlogSearchService
                 // 提取作者值，去除引号
                 var value = filter.Replace("author = ", "").Trim('\'');
                 // 添加作者过滤条件
-                boolQuery.Filter = [new TermQuery(nameof(Blog.Author).ToLower()!)
+                boolQuery.Filter = [new TermQuery(nameof(Blog.Author).ToCamelCase()!)
                 {
                     Value = value
                 }];
@@ -521,25 +521,25 @@ public class BlogElasticsearchService : IBlogSearchService
         // 根据排序字符串设置不同的排序选项
         if (sort.Contains("createdAt:asc"))
         {
-            var op = SortOptions.Field(Field.FromString(nameof(Blog.CreatedAt).ToLower())!, new FieldSort { Order = SortOrder.Asc });
+            var op = SortOptions.Field(Field.FromString(nameof(Blog.CreatedAt).ToCamelCase())!, new FieldSort { Order = SortOrder.Asc });
             // 按创建时间升序排序
             sortOptions.Add(op);
         }
         else if (sort.Contains("createdAt:desc"))
         {
-            var op = SortOptions.Field(Field.FromString(nameof(Blog.CreatedAt).ToLower())!, new FieldSort { Order = SortOrder.Desc });
+            var op = SortOptions.Field(Field.FromString(nameof(Blog.CreatedAt).ToCamelCase())!, new FieldSort { Order = SortOrder.Desc });
             // 按创建时间降序排序
             sortOptions.Add(op);
         }
         else if (sort.Contains("updatedAt:asc"))
         {
-            var op = SortOptions.Field(Field.FromString(nameof(Blog.UpdatedAt).ToLower())!, new FieldSort { Order = SortOrder.Asc });
+            var op = SortOptions.Field(Field.FromString(nameof(Blog.UpdatedAt).ToCamelCase())!, new FieldSort { Order = SortOrder.Asc });
             // 按更新时间升序排序
             sortOptions.Add(op);
         }
         else if (sort.Contains("updatedAt:desc"))
         {
-            var op = SortOptions.Field(Field.FromString(nameof(Blog.UpdatedAt).ToLower())!, new FieldSort { Order = SortOrder.Desc });
+            var op = SortOptions.Field(Field.FromString(nameof(Blog.UpdatedAt).ToCamelCase())!, new FieldSort { Order = SortOrder.Desc });
             // 按更新时间降序排序
             sortOptions.Add(op);
         }
@@ -547,6 +547,7 @@ public class BlogElasticsearchService : IBlogSearchService
         // 如果有排序选项则返回，否则返回null
         return sortOptions.Count > 0 ? sortOptions : null;
     }
+
 
     #endregion
 }

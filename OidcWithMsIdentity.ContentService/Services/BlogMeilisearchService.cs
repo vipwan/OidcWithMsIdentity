@@ -61,26 +61,26 @@ public class BlogMeilisearchService(MeilisearchClient meilisearchClient) : IBlog
 
         // 定义可搜索的属性
         var searchableAttributes = new[] {
-            nameof(Blog.Title).ToLower(),
-            nameof(Blog.Content).ToLower(),
-            nameof(Blog.Author).ToLower(),
-            nameof(Blog.Category).ToLower(),
-            nameof(Blog.Tags).ToLower()
+            nameof(Blog.Title).ToCamelCase(),
+            nameof(Blog.Content).ToCamelCase(),
+            nameof(Blog.Author).ToCamelCase(),
+            nameof(Blog.Category).ToCamelCase(),
+            nameof(Blog.Tags).ToCamelCase()
         };
         await index.UpdateSearchableAttributesAsync(searchableAttributes);
 
         // 定义可过滤的属性
         var filterableAttributes = new[] {
-            nameof(Blog.Category).ToLower(),
-            nameof(Blog.Author).ToLower(),
-            nameof(Blog.Tags).ToLower()
+            nameof(Blog.Category).ToCamelCase(),
+            nameof(Blog.Author).ToCamelCase(),
+            nameof(Blog.Tags).ToCamelCase()
         };
         await index.UpdateFilterableAttributesAsync(filterableAttributes);
 
         // 定义排序属性
         var sortableAttributes = new[] {
-            nameof(Blog.CreatedAt).ToLower(),
-            nameof(Blog.UpdatedAt).ToLower()
+            nameof(Blog.CreatedAt).ToCamelCase(),
+            nameof(Blog.UpdatedAt).ToCamelCase()
         };
         await index.UpdateSortableAttributesAsync(sortableAttributes);
 
@@ -89,9 +89,9 @@ public class BlogMeilisearchService(MeilisearchClient meilisearchClient) : IBlog
         {
             SortFacetValuesBy = new Dictionary<string, SortFacetValuesByType>
             {
-                { nameof(Blog.Category).ToLower(), SortFacetValuesByType.Alpha },
-                { nameof(Blog.Author).ToLower(), SortFacetValuesByType.Alpha },
-                { nameof(Blog.Tags).ToLower(), SortFacetValuesByType.Alpha } // 按字母顺序排序
+                { nameof(Blog.Category).ToCamelCase(), SortFacetValuesByType.Alpha },
+                { nameof(Blog.Author).ToCamelCase(), SortFacetValuesByType.Alpha },
+                { nameof(Blog.Tags).ToCamelCase(), SortFacetValuesByType.Alpha } // 按字母顺序排序
             }
         };
         await index.UpdateFacetingAsync(faceting);
@@ -175,7 +175,7 @@ public class BlogMeilisearchService(MeilisearchClient meilisearchClient) : IBlog
         // 启用搜索内容高亮
         if (enableHighlight)
         {
-            searchOptions.AttributesToHighlight = [nameof(Blog.Title).ToLower(), nameof(Blog.Content).ToLower()];
+            searchOptions.AttributesToHighlight = [nameof(Blog.Title).ToCamelCase(), nameof(Blog.Content).ToCamelCase()];
             searchOptions.HighlightPreTag = "<mark>";
             searchOptions.HighlightPostTag = "</mark>";
         }
@@ -184,7 +184,7 @@ public class BlogMeilisearchService(MeilisearchClient meilisearchClient) : IBlog
         if (facets?.Length > 0)
         {
             // 确保所有分面属性名也是小写的
-            searchOptions.Facets = [.. facets.Select(f => f.ToLower())];
+            searchOptions.Facets = [.. facets.Select(f => f.ToCamelCase())];
         }
 
         // PaginatedSearchResult类型的搜索结果.
