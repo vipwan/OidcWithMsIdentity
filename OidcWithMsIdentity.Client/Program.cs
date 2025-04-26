@@ -4,7 +4,7 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using OidcWithMsIdentity.Client;
+using OidcWithMsIdentity.ServiceDefaults;
 using System.Security.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -22,8 +22,6 @@ builder.AddRedisDistributedCache("redis");
 builder.AddRedisClient("redis");
 // 添加Redis 输出缓存服务
 builder.AddRedisOutputCache("redis");
-
-builder.Services.AddSingleton<IServiceUriProvider, ServiceUriProvider>();
 
 // 添加YARP服务
 builder.Services.AddHttpForwarder();

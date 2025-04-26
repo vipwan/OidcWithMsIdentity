@@ -1,9 +1,11 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ServiceDiscovery;
+using OidcWithMsIdentity.ServiceDefaults;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
@@ -17,6 +19,12 @@ namespace Microsoft.Extensions.Hosting
     {
         public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
         {
+            // 添加环境变量配置
+            builder.Configuration.AddEnvironmentVariables();
+
+            builder.Services.AddSingleton<IServiceUriProvider, ServiceUriProvider>();
+
+
             builder.ConfigureOpenTelemetry();
 
             builder.AddDefaultHealthChecks();

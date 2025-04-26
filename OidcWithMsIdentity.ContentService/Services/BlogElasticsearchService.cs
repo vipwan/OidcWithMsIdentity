@@ -357,7 +357,7 @@ public class BlogElasticsearchService : IBlogSearchService
             _logger.LogError("搜索失败: {ErrorReason}", searchResponse.DebugInformation);
             // 返回空的搜索结果
             return new SearchResult<Blog>(
-                new List<Blog>(),
+                [],
                 0,
                 new Dictionary<string, IReadOnlyDictionary<string, int>>(),
                 pageSize,
@@ -374,7 +374,7 @@ public class BlogElasticsearchService : IBlogSearchService
             foreach (var hit in searchResponse.Hits)
             {
                 // 查找对应的博客对象并处理高亮内容
-                if (hit.Highlight != null && hits.FirstOrDefault(b => b.Id == int.Parse(hit.Id)) is Blog blog)
+                if (hit.Highlight != null && hits.FirstOrDefault(b => b.Id == int.Parse(hit.Id!)) is Blog blog)
                 {
                     // 处理标题高亮
                     if (hit.Highlight.TryGetValue(nameof(Blog.Title).ToLower(), out var titleHighlights) && titleHighlights.Any())

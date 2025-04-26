@@ -16,12 +16,23 @@ var mysql = builder.AddMySql("mysql")
 var meilisearch = builder.AddMeilisearch("meilisearch")
     .WithDataVolume("meilisearch");//持久化索引
 
-// 添加elasticsearch搜索引擎
+// 添加elasticsearch搜索引擎,仅用于测试,因此内存限制256M
 var elasticsearch = builder.AddElasticsearch("elasticsearch")
     .WithDataVolume("es-data")//持久化索引
     .WithEnvironment("xpack.security.enabled", "false")  // 关闭安全功能Kibana链接需要
-    .WithEnvironment("ES_JAVA_OPTS", "-Xms512m -Xmx512m")//设置JVM内存限制
-    ;
+    .WithEnvironment("ES_JAVA_OPTS", "-Xms256m -Xmx256m")//设置JVM内存限制
+                                                         //以下环境变量允许dejavu可视化elasticsearch索引
+    .WithEnvironment("http.cors.allow-origin", "http://localhost:1358") //允许跨域请求
+    .WithEnvironment("http.cors.enabled", "true") //启用CORS
+    .WithEnvironment("http.cors.allow-headers", "X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization") //允许的请求头
+    .WithEnvironment("http.cors.allow-credentials", "true"); //允许凭据
+;
+
+// 添加appbaseio/dejavu用于可视化elasticsearch索引
+// 链接查看content的环境变量:ConnectionStrings__elasticsearch
+var dejavu = builder.AddContainer("dejavu", "appbaseio/dejavu", "latest")
+    .WithReference(elasticsearch).WaitFor(elasticsearch) // Add a reference to the elasticsearch container
+    .WithEndpoint(1358, 1358, "http"); // Map the container port 1358 to the host port 1358
 
 // 添加kibana
 //var kibana = builder
@@ -58,7 +69,6 @@ var client = builder.AddProject<Projects.OidcWithMsIdentity_Client>("client")
     .WithReference(server).WaitFor(server)
     //.WithReplicas(2)//2个副本
     .WithReference(contentSvc)//客户端检索内容服务
-    .WithEnvironment("CLIENT_ENV_VAR", "value")
     ;
 
 builder.Build().Run();
