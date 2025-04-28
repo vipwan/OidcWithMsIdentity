@@ -4,6 +4,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,6 +12,7 @@
 		<PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.2.1" />
 		<PackageReference Include="Biwen.AutoClassGen" Version="1.8.1" PrivateAssets="all" />
 		<PackageReference Include="CommunityToolkit.Aspire.Meilisearch" Version="9.4.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
 	</ItemGroup>
 
 	<ItemGroup>

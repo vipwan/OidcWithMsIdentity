@@ -4,12 +4,18 @@
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+// 添加Docker Compose发布器
+builder.AddDockerComposePublisher();
+
+
 // 添加SQLite存储
-var sqlite = builder.AddSqlite("sqlite").WithSqliteWeb();
+// var sqlite = builder.AddSqlite("sqlite").WithSqliteWeb();
 
 // 添加MySQL数据库
 var mysql = builder.AddMySql("mysql")
+    .WithImageTag("8.4.5")
     .WithDataVolume("mysql-data")//持久化数据卷
+    .WithLifetime(ContainerLifetime.Persistent)
     .AddDatabase("oidcdb");// 创建名为oidcdb的数据库
 
 // 添加meilisearch搜索引擎
@@ -19,6 +25,7 @@ var meilisearch = builder.AddMeilisearch("meilisearch")
 // 添加elasticsearch搜索引擎,仅用于测试,因此内存限制256M
 var elasticsearch = builder.AddElasticsearch("elasticsearch")
     .WithDataVolume("es-data")//持久化索引
+    .WithLifetime(ContainerLifetime.Persistent)
     .WithEnvironment("xpack.security.enabled", "false")  // 关闭安全功能Kibana链接需要
     .WithEnvironment("ES_JAVA_OPTS", "-Xms256m -Xmx256m")//设置JVM内存限制
                                                          //以下环境变量允许dejavu可视化elasticsearch索引
@@ -47,13 +54,16 @@ var mq = builder.AddRabbitMQ("mq")
      .WithEnvironment("RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS", "-rabbitmq_management http_max_header_size 64000") // 增加请求头大小限制
      ;
 
+
+
+
 // 添加Redis缓存
 var redis = builder.AddRedis("redis");
 
 // 添加服务端
 var server = builder.AddProject<Projects.OidcWithMsIdentity_Server>("server")
     .WithReference(mysql).WaitFor(mysql)
-    .WithReference(sqlite).WaitFor(sqlite) //sqlite
+    //.WithReference(sqlite).WaitFor(sqlite) //sqlite
     ;
 
 // 添加ContentService

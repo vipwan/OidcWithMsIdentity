@@ -7,6 +7,7 @@
 		<NoWarn>GEN053;</NoWarn>
 		<SatelliteResourceLanguages>zh-CN;en-US</SatelliteResourceLanguages>
 		<OidcVer>6.2.1</OidcVer>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -16,6 +17,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="9.2.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
 		<PackageReference Include="OpenIddict.Client.AspNetCore" Version="$(OidcVer)" />
 	</ItemGroup>
 
