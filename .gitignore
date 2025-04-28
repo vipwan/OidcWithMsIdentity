@@ -364,3 +364,8 @@ FodyWeavers.xsd
 OidcWithMsIdentity.Server/MyData.db
 OidcWithMsIdentity.Server/MyData.db-shm
 OidcWithMsIdentity.Server/MyData.db-wal
+/OidcWithMsIdentity.AppHost/aspirate-output
+/OidcWithMsIdentity.AppHost/aspirate-state.json
+/OidcWithMsIdentity.AppHost/manifest.json
+/OidcWithMsIdentity.AppHost/aspirate.json
+/OidcWithMsIdentity.AppHost/aspire-manifest.json
