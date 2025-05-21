@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<Sdk Name="Aspire.AppHost.Sdk" Version="9.2.1" />
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.3.0" />
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -12,12 +12,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.1" />
-		<PackageReference Include="Aspire.Hosting.Docker" Version="9.2.1-preview.1.25222.1" />
+		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.0" />
+		<PackageReference Include="Aspire.Hosting.Docker" Version="9.3.0-preview.1.25265.20" />
 		<PackageReference Include="Aspire.Hosting.Elasticsearch" Version="9.2.1-preview.1.25222.1" />
-		<PackageReference Include="Aspire.Hosting.MySql" Version="9.2.1" />
-		<PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.2.1" />
-		<PackageReference Include="Aspire.Hosting.Redis" Version="9.2.1" />
+		<PackageReference Include="Aspire.Hosting.MySql" Version="9.3.0" />
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.0" />
+		<PackageReference Include="Aspire.Hosting.Redis" Version="9.3.0" />
 		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Meilisearch" Version="9.4.0" />
 		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Sqlite" Version="9.4.0" />
 	</ItemGroup>

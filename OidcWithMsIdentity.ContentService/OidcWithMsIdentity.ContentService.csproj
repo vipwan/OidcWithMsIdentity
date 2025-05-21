@@ -9,7 +9,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.Elastic.Clients.Elasticsearch" Version="9.2.1-preview.1.25222.1" />
-		<PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.2.1" />
+		<PackageReference Include="Aspire.RabbitMQ.Client.v7" Version="9.3.0" />
 		<PackageReference Include="Biwen.AutoClassGen" Version="1.8.1" PrivateAssets="all" />
 		<PackageReference Include="CommunityToolkit.Aspire.Meilisearch" Version="9.4.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />

@@ -5,7 +5,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 // 添加Docker Compose发布器
-builder.AddDockerComposePublisher();
+builder.AddDockerComposeEnvironment("compose");
 
 
 // 添加SQLite存储
