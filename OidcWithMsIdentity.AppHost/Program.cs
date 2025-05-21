@@ -5,7 +5,12 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 // 添加Docker Compose发布器
-builder.AddDockerComposeEnvironment("compose");
+builder.AddDockerComposeEnvironment("compose") //9.3.0 版本
+           .WithProperties(env =>
+           {
+               env.BuildContainerImages = false; // skip image build step
+           })
+    ;
 
 
 // 添加SQLite存储
@@ -80,5 +85,18 @@ var client = builder.AddProject<Projects.OidcWithMsIdentity_Client>("client")
     //.WithReplicas(2)//2个副本
     .WithReference(contentSvc)//客户端检索内容服务
     ;
+
+
+// Add a container to the app
+//builder.AddContainer("service", "nginx")
+//       .WithEnvironment("ORIGINAL_ENV", "value")
+//       //9.3.0版本开始支持添加环境变量
+//       .PublishAsDockerComposeService((resource, service) =>
+//       {
+//           service.Labels["custom-label"] = "test-value";
+//           service.AddEnvironmentalVariable("CUSTOM_ENV", "custom-value");
+//           service.Restart = "always";
+//       });
+
 
 builder.Build().Run();
