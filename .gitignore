@@ -369,3 +369,4 @@ OidcWithMsIdentity.Server/MyData.db-wal
 /OidcWithMsIdentity.AppHost/manifest.json
 /OidcWithMsIdentity.AppHost/aspirate.json
 /OidcWithMsIdentity.AppHost/aspire-manifest.json
+/OidcWithMsIdentity.AppHost/docker-compose.yaml
