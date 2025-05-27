@@ -18,8 +18,8 @@
 		<PackageReference Include="Aspire.Hosting.MySql" Version="9.3.0" />
 		<PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.0" />
 		<PackageReference Include="Aspire.Hosting.Redis" Version="9.3.0" />
-		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Meilisearch" Version="9.4.0" />
-		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Sqlite" Version="9.4.0" />
+		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Meilisearch" Version="9.5.0" />
+		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Sqlite" Version="9.5.0" />
 	</ItemGroup>
 
 	<ItemGroup>
